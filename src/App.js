@@ -10,7 +10,6 @@ import SignUp from "./pages/SignUp";
 function App() {
   return (
     <div className="App">
-      My App
       <Router>
         <Routes>
           <Route path="/" element={<Explore />} />
