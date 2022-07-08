@@ -4,6 +4,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { toast } from "react-toastify";
 import { ReactComponent as ArrowRightIcon } from "../assets/svg/keyboardArrowRightIcon.svg";
 import visibilityIcon from "../assets/svg/visibilityIcon.svg";
+import OAuth from "../components/OAuth";
 
 const SignIn = () => {
 
@@ -56,7 +57,7 @@ const SignIn = () => {
                     </button>
                 </div>
             </form>
-
+            <OAuth />
             <Link to="/sign-up" className="registerLink">Don't have an account? Sign up now!</Link>
         </div>
     );
