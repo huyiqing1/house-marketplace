@@ -59,7 +59,7 @@ const Category = () => {
                     </ul>
                 </main>
             ) : (
-                <p>No Listings for {params.categoryName} </p>
+                !isLoading && <p>No Listings for {params.categoryName} </p>
             )}
         </div>
     );
