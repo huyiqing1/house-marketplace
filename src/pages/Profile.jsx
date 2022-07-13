@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getAuth, updateProfile } from "firebase/auth";
 import { useNavigate, Link } from "react-router-dom";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, collection, getDocs, query, where, orderBy, deleteDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { db } from "../firebase.config";
 import arrowRight from "../assets/svg/keyboardArrowRightIcon.svg";
 import homeIcon from "../assets/svg/homeIcon.svg";
+import ListingItem from "../components/ListingItem";
+import Spinner from "../components/Spinner";
 
 const Profile = () => {
     const auth = getAuth();
@@ -17,9 +19,29 @@ const Profile = () => {
     });
 
     const [changeDetails, setChangeDetails] = useState(false);
-
+    const [listings, setListings] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const { name, email } = formData;
+
+    useEffect(() => {
+        const fetchUserListings = async () => {
+            const listingsRef = collection(db, "listings");
+            const q = query(listingsRef, where("userRef", "==", auth.currentUser.uid), orderBy("timestamp", "desc"));
+            const querySnap = await getDocs(q);
+            let listing = [];
+            querySnap.forEach((doc) => {
+                return listing.push({
+                    id: doc.id,
+                    data: doc.data(),
+                })
+            });
+            setListings(listing);
+            setIsLoading(false);
+        }
+
+        fetchUserListings();
+    }, [auth.currentUser.uid]);
 
     const onLogout = () => {
         auth.signOut();
@@ -33,7 +55,17 @@ const Profile = () => {
         }))
     }
 
+    const onDelete = async (listingId) => {
+        if (window.confirm("Are you sure you want to delete this listing?")) {
+            await deleteDoc(doc(db, "listings", listingId));
+            const updatedListings = listings.filter((listing) => listing.id !== listingId);
+            setListings(updatedListings);
+            toast.success("Successfully delete the listing!")
+        }
+    }
+
     const onSubmit = async () => {
+
         try {
             if (auth.currentUser.displayName !== name) {
                 await updateProfile(auth.currentUser, {
@@ -48,6 +80,10 @@ const Profile = () => {
         } catch (error) {
             toast.error("Fail to update the profile. Please check!");
         }
+    }
+
+    if (isLoading) {
+        return <Spinner />
     }
 
     return (
@@ -89,6 +125,21 @@ const Profile = () => {
                     <p>Sell or rent your home</p>
                     <img src={arrowRight} alt="arrow right" />
                 </Link>
+                {!isLoading && listings?.length > 0 && (
+                    <>
+                        <p className="listingText">Your Listings</p>
+                        <ul className="listingsList">
+                            {listings.map((listing) => (
+                                <ListingItem
+                                    key={listing.id}
+                                    listing={listing.data}
+                                    id={listing.id}
+                                    onDelete={() => onDelete(listing.id)}
+                                />
+                            ))}
+                        </ul>
+                    </>
+                )}
             </main>
         </div>
     );

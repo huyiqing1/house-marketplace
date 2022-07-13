@@ -5,7 +5,7 @@ import bathtubIcon from "../assets/svg/bathtubIcon.svg";
 
 const ListingItem = ({ listing, id, onDelete }) => {
     return (
-        <li className="listing-item categoryListing">
+        <li className="categoryListing">
             <Link to={`/category/${listing.type}/${id}`} className="categoryListingLink">
                 <img src={listing.imgUrls[0]} alt={listing.name} className="categoryListingImg" />
                 <div className="categoryListingDetails">
@@ -26,7 +26,7 @@ const ListingItem = ({ listing, id, onDelete }) => {
                 </div>
             </Link>
             {onDelete && (
-                <DeleteIcon className="removeIcon" fill="rgb(231,76,60)" onClick={onDelete(listing.id, listing.name)} />
+                <DeleteIcon className="removeIcon" fill="rgb(231,76,60)" onClick={() => onDelete(listing.id, listing.name)} />
             )}
         </li>
     )
