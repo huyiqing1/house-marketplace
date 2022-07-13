@@ -105,6 +105,8 @@ const CreateListing = () => {
                             case 'running':
                                 //console.log('Upload is running');
                                 break;
+                            default:
+                                return;
                         }
                     },
                     (error) => {
