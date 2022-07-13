@@ -68,6 +68,12 @@ const CreateListing = () => {
             return;
         }
 
+        if (name.charAt(0) === "#") {
+            setIsLoading(false);
+            toast.error("Lisitng name can not start with '#'!");
+            return;
+        }
+
         let geolocation = {};
         let location;
 

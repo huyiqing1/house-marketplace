@@ -72,7 +72,7 @@ const Listing = () => {
                             {listing.furnished && "Furnished"}
                         </li>
                         <p className="listingLocationTitle">Location</p>
-                        {auth.currentUser?.uid !== listing.userRef && <Link to={`/contact/${listing.userRef}?listingName=${listing.name}&listingLocation=${listing.location}`} className="primaryButton">Contact Landlord</Link>}
+                        {auth.currentUser?.uid !== listing.userRef && <Link to={`/contact/${listing.userRef}?listingName=${listing.name}`} className="primaryButton">Contact Landlord</Link>}
                     </ul>
                 </div>
             </main>
