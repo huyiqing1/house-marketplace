@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -15,7 +15,6 @@ const Listing = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [shareLinkCopied, setShareLinkCopied] = useState(false);
 
-    const navigate = useNavigate();
     const params = useParams();
     const auth = getAuth();
     useEffect(() => {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { collection, getDocs, query, where, orderBy, limit } from "firebase/firestore";
+import { collection, getDocs, query, where, orderBy, limit, startAfter } from "firebase/firestore";
 import { db } from "../firebase.config";
 import { toast } from "react-toastify";
 import Spinner from "../components/Spinner";
@@ -9,6 +9,7 @@ import ListingItem from "../components/ListingItem";
 const Category = () => {
     const [listings, setListings] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [lastFetchedListing, setLastFetchedListing] = useState(null);
 
     const params = useParams();
 
@@ -20,10 +21,13 @@ const Category = () => {
                     listingRef,
                     where("type", "==", params.categoryName),
                     orderBy("timestamp", "desc"),
-                    limit(10)
+                    limit(10),
                 );
 
                 const querySnap = await getDocs(q);
+
+                const lastVisible = querySnap.docs[querySnap.docs.length - 1];
+                setLastFetchedListing(lastVisible);
 
                 const listing = [];
                 querySnap.forEach((doc) => {
@@ -42,6 +46,37 @@ const Category = () => {
         fetchListings();
     }, [params.categoryName]);
 
+    const onFetchMoreListings = async () => {
+        try {
+            const listingRef = collection(db, "listings");
+            const q = query(
+                listingRef,
+                where("type", "==", params.categoryName),
+                orderBy("timestamp", "desc"),
+                startAfter(lastFetchedListing),
+                limit(10),
+            );
+
+            const querySnap = await getDocs(q);
+
+            const lastVisible = querySnap.docs[querySnap.docs.length - 1];
+            setLastFetchedListing(lastVisible);
+
+            const listing = [];
+            querySnap.forEach((doc) => {
+                return listing.push({
+                    id: doc.id,
+                    data: doc.data(),
+                })
+            });
+
+            setListings((prevState) => [...prevState, ...listing]);
+            setIsLoading(false);
+        } catch (error) {
+            toast.error("Could not get more listings. Please try again!");
+        }
+    }
+
     return (
         <div className="category">
             <header>
@@ -51,13 +86,20 @@ const Category = () => {
             </header>
             {isLoading && <Spinner />}
             {!isLoading && (listings && listings.length > 0) ? (
-                <main>
-                    <ul className="categoryListings">
-                        {listings.map((listing) => (
-                            <ListingItem listing={listing.data} id={listing.id} key={listing.id} />
-                        ))}
-                    </ul>
-                </main>
+                <>
+                    <main>
+                        <ul className="categoryListings">
+                            {listings.map((listing) => (
+                                <ListingItem listing={listing.data} id={listing.id} key={listing.id} />
+                            ))}
+                        </ul>
+                    </main>
+                    <br />
+                    <br />
+                    {lastFetchedListing && (
+                        <p className="loadMore" onClick={() => onFetchMoreListings()}>Load More Listings</p>
+                    )}
+                </>
             ) : (
                 !isLoading && <p>No Listings for {params.categoryName} </p>
             )}
