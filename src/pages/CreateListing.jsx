@@ -9,6 +9,8 @@ import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
 
 const CreateListing = () => {
+
+    // eslint-disable-next-line
     const [geolocationEnabled, setGeolocationEnabled] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -102,6 +104,7 @@ const CreateListing = () => {
 
                 uploadTask.on('state_changed',
                     (snapshot) => {
+                        // eslint-disable-next-line
                         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                         //console.log('Upload is ' + progress + '% done');
                         switch (snapshot.state) {

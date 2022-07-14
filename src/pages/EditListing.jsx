@@ -9,6 +9,7 @@ import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
 
 function EditListing() {
+    // eslint-disable-next-line
     const [geolocationEnabled, setGeolocationEnabled] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [listing, setListing] = useState();
@@ -40,6 +41,7 @@ function EditListing() {
             toast.error("You can not edit this listing!");
             navigate("/");
         }
+        // eslint-disable-next-line
     }, []);
 
     useEffect(() => {
@@ -132,6 +134,7 @@ function EditListing() {
 
                 uploadTask.on('state_changed',
                     (snapshot) => {
+                        // eslint-disable-next-line
                         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                         //console.log('Upload is ' + progress + '% done');
                         switch (snapshot.state) {
